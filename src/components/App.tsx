@@ -1,3 +1,12 @@
+import Background from "./Background";
+import Main from "./Main";
+import QuizHome from "./QuizHome";
+
 export default function App() {
-    return <h1>Hello World!</h1>;
+    return (
+        <Main>
+            <QuizHome />
+            <Background />
+        </Main>
+    );
 }
