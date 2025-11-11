@@ -12,33 +12,38 @@ export default function QuizHome() {
                     />
                     <label>Number of questions*</label>
                 </div>
-                <select defaultValue="default">
-                    <option value="default" disabled>
-                        Question Category
-                    </option>
-                    <option value="">Science</option>
-                    <option value="">Nature</option>
-                    <option value="">Flower</option>
-                </select>
-                <select defaultValue="default">
-                    <option value="default" disabled>
-                        Difficulty
-                    </option>
-                    <option value="Any">Any</option>
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                </select>
-                <select defaultValue="default">
-                    <option value="default" disabled>
-                        Question Type
-                    </option>
-                    <option value="">Any</option>
-                    <option value="">Multiple</option>
-                    <option value="">Boolean</option>
-                </select>
+                <div className="select-wrapper">
+                    <select required defaultValue="">
+                        <option value="" disabled hidden></option>
+                        <option value="Science">Science</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Flower">Flower</option>
+                    </select>
+                    <label>Question Category</label>
+                </div>
+                <div className="select-wrapper">
+                    <select required defaultValue="">
+                        <option value="" disabled hidden></option>
+                        <option value="Any">Any</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                    <label>Difficulty</label>
+                </div>
+                <div className="select-wrapper" id="type">
+                    <select required defaultValue="">
+                        <option value="" disabled hidden></option>
+                        <option value="Any">Any</option>
+                        <option value="Multiple">Multiple</option>
+                        <option value="Boolean">Boolean</option>
+                    </select>
+                    <label>Question Type</label>
+                </div>
+                <div className="button-wrapper">
+                    <button>Start Quiz</button>
+                </div>
             </form>
-            <button>Start Quiz</button>
         </div>
     );
 }

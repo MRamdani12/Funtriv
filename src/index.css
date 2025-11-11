@@ -3,6 +3,17 @@
     --background-color: #211832;
     --secondary-background-color: #2c2042;
     --text-color: white;
+    --text-color-button: white;
+    --dark-mode-border: #f25912;
+    --dark-mode-bg-color: #f25912;
+}
+
+.light-mode {
+    --background-color: #ffffff;
+    --secondary-background-color: #f5f0ff;
+    --text-color: black;
+    --dark-mode-border: black;
+    --dark-mode-bg-color: transparent;
 }
 
 * {
@@ -38,6 +49,7 @@ body {
     color: var(--text-color);
     font-family: pixel-operator-mono;
     overflow-x: hidden;
+    padding: 0 24px;
 }
 
 h1 {
@@ -53,13 +65,17 @@ label {
     font-family: pixel-operator-mono, pixel-operator-sc;
 }
 
+input[type="number"] {
+    appearance: textfield;
+}
+
 button {
     padding: 12px 64px;
     background-color: var(--primary-color);
     border: none;
     font-family: pixel-operator-sc;
     font-size: 22px;
-    color: var(--text-color);
+    color: white;
     font-weight: bold;
     border: solid 1px var(--primary-color);
     border-radius: 4px;
@@ -68,8 +84,8 @@ button {
 
     &:hover {
         border: solid 1px var(--text-color);
-
         background-color: transparent;
+        color: var(--text-color);
     }
 }
 
@@ -89,6 +105,7 @@ button {
         width: 100%;
         flex: 0 0 100%;
         animation: 12s ease-in-out infinite;
+        color: var(--secondary-background-color);
     }
 }
 
@@ -102,9 +119,42 @@ button {
     }
 }
 
-.quiz-home {
-    height: 100vh;
+nav {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 12px;
+}
+
+.dark-mode {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+
+    & .dark-mode-slider {
+        display: flex;
+        align-items: center;
+        width: 80px;
+        padding: 6px;
+        border: 1px solid var(--dark-mode-border);
+        border-radius: 6px;
+        background-color: var(--dark-mode-bg-color);
+        transition: all 0.5s;
+        cursor: pointer;
+        & svg {
+            transition: all ease 0.5s;
+        }
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.quiz-home {
+    display: flex;
+    padding-top: 15vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -123,15 +173,15 @@ button {
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
-        gap: 20px;
+        gap: 32px;
         margin-bottom: 70px;
     }
 }
 
 .quiz-home form {
     & input {
-        padding: 12px;
-        width: 315px;
+        padding: 16px 12px;
+        width: 350px;
         background-color: transparent;
         color: var(--text-color);
         border: none;
@@ -158,39 +208,73 @@ button {
     }
 
     & select {
-        padding: 12px;
+        padding: 16px 12px;
+        appearance: none;
         width: 100%;
         background-color: transparent;
         color: var(--text-color);
-        border: none;
+        border: 1px solid transparent;
+
         border-bottom: 1px solid var(--text-color);
+        transition: all 0.2s;
+
+        &:focus {
+            border: 1px solid var(--text-color);
+            box-shadow: none;
+            outline: none;
+        }
 
         & option {
             color: black;
             font-family: Arial, Helvetica, sans-serif;
         }
+
+        &:valid {
+            border: 1px solid var(--text-color);
+        }
     }
 
-    & .input-wrapper {
+    & .button-wrapper {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+    }
+
+    & .input-wrapper,
+    .select-wrapper {
         position: relative;
 
         & label {
             position: absolute;
-            left: 12px;
+            left: 6px;
             top: 12px;
             opacity: 0.5;
             background-color: var(--background-color);
             padding: 6px;
             transform-origin: 0 0;
             z-index: 999;
-            transition: all 0.3s;
+            transition: transform 0.3s;
             pointer-events: none;
         }
     }
 }
 
+.quiz-home form .select-wrapper::after {
+    content: "v";
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+}
+
 .quiz-home form input:focus + label,
-.quiz-home form input:not(:placeholder-shown) + label {
+.quiz-home form input:not(:placeholder-shown) + label,
+.quiz-home form select:focus + label,
+.quiz-home form select:valid + label {
     transform: scale(0.9) translateY(-100%);
     opacity: 1;
 }
