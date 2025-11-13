@@ -45,8 +45,6 @@ export default function DarkMode() {
                         width="16.6436"
                         height="1.97694"
                         fill="currentColor"
-                        stroke="currentColor"
-                        strokeWidth="0.467505"
                     />
                     <rect
                         x="2.97789"
@@ -54,8 +52,6 @@ export default function DarkMode() {
                         width="16.6436"
                         height="1.97694"
                         fill="currentColor"
-                        stroke="currentColor"
-                        strokeWidth="0.467505"
                     />
                     <rect
                         x="19.7894"
@@ -64,8 +60,6 @@ export default function DarkMode() {
                         height="1.97694"
                         transform="rotate(-90 19.7894 19.3218)"
                         fill="currentColor"
-                        stroke="currentColor"
-                        strokeWidth="0.467505"
                     />
                     <rect
                         x="0.233752"
@@ -74,8 +68,6 @@ export default function DarkMode() {
                         height="1.97694"
                         transform="rotate(-90 0.233752 19.3218)"
                         fill="currentColor"
-                        stroke="currentColor"
-                        strokeWidth="0.467505"
                     />
                     <rect
                         width="17.1111"

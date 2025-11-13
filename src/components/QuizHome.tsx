@@ -1,13 +1,23 @@
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { isOneOfString } from "../utils/guards/isOneOfString";
 import type { QuizAction } from "../utils/types/QuizAction";
+import { fetchJSON } from "../utils/api/fetchJSON";
 
 const initialFormState: InitialFormState = {
     numQuestion: undefined,
     questionCategory: undefined,
     questionDifficulty: undefined,
     questionType: undefined,
+};
+
+type openTDBCategory = {
+    id: number;
+    name: string;
+};
+
+type openTDBCategoryRes = {
+    trivia_categories: openTDBCategory[];
 };
 
 type InitialFormState = {
@@ -26,6 +36,7 @@ type Action =
 
 type QuizHomeProps = {
     quizDispatch: React.ActionDispatch<[action: QuizAction]>;
+    error: string | null;
 };
 
 function formReducer(formState: InitialFormState, action: Action) {
@@ -45,11 +56,33 @@ function formReducer(formState: InitialFormState, action: Action) {
     }
 }
 
-export default function QuizHome({ quizDispatch }: QuizHomeProps) {
+export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
     const [
         { numQuestion, questionCategory, questionDifficulty, questionType },
         formDispatch,
     ] = useReducer(formReducer, initialFormState);
+    const [categoryOptions, setCategoryOptions] = useState<
+        openTDBCategory[] | null
+    >(null);
+
+    useEffect(() => {
+        async function getCategory() {
+            try {
+                const data = await fetchJSON<openTDBCategoryRes>(
+                    "https://opentdb.com/api_category.php"
+                );
+                setCategoryOptions(data.trivia_categories);
+            } catch (err) {
+                quizDispatch({
+                    type: "error",
+                    payload: `Error when fetching quiz category:
+                     ${String(err)}`,
+                });
+            }
+        }
+
+        getCategory();
+    }, [quizDispatch]);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -90,7 +123,7 @@ export default function QuizHome({ quizDispatch }: QuizHomeProps) {
                         type="number"
                         placeholder="Number of questions*"
                     />
-                    <label>Number of questions*</label>
+                    <label>Number of questions (max 50)*</label>
                 </div>
                 <div className="select-wrapper">
                     <select
@@ -104,9 +137,22 @@ export default function QuizHome({ quizDispatch }: QuizHomeProps) {
                         required
                     >
                         <option value="" disabled hidden></option>
-                        <option value="Science">Science</option>
-                        <option value="Nature">Nature</option>
-                        <option value="Flower">Flower</option>
+                        {error && !categoryOptions && (
+                            <option disabled>{error}</option>
+                        )}
+                        {!categoryOptions && !error && (
+                            <option disabled>Loading...</option>
+                        )}
+                        {categoryOptions &&
+                            categoryOptions
+                                .sort((a, b) => a.name.localeCompare(b.name))
+                                .map((c) => {
+                                    return (
+                                        <option key={c.id} value={c.id}>
+                                            {c.name}
+                                        </option>
+                                    );
+                                })}
                     </select>
                     <label>Question Category*</label>
                 </div>
@@ -161,7 +207,7 @@ export default function QuizHome({ quizDispatch }: QuizHomeProps) {
                     <label>Question Type*</label>
                 </div>
                 <div className="button-wrapper">
-                    <button type="submit">Start Quiz</button>
+                    <button type="submit">Fetch Quiz</button>
                 </div>
             </form>
         </div>
