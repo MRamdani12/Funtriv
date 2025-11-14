@@ -122,6 +122,8 @@ export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
                         required
                         type="number"
                         placeholder="Number of questions*"
+                        min={1}
+                        max={50}
                     />
                     <label>Number of questions (max 50)*</label>
                 </div>
