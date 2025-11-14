@@ -75,7 +75,7 @@ body {
     color: var(--text-color);
     font-family: pixel-operator-mono;
     overflow-x: hidden;
-    padding: 0 24px;
+    padding: 0 12px;
     font-weight: 300;
     position: relative;
     min-height: 100vh;
@@ -302,13 +302,15 @@ svg {
         grid-template-rows: 1fr 1fr;
         gap: 32px;
         margin-bottom: 70px;
+        padding: 0 12px;
     }
 }
 
 .quiz-home form {
     & input {
         padding: 16px 12px;
-        width: 400px;
+        width: 100%;
+        max-width: 400px;
         background-color: transparent;
         color: var(--text-color);
         border: none;
@@ -337,7 +339,8 @@ svg {
     & select {
         padding: 16px 32px 16px 16px;
         appearance: none;
-        width: 400px;
+        width: 100%;
+        max-width: 400px;
         background-color: transparent;
         color: var(--text-color);
         border: 1px solid transparent;
@@ -621,7 +624,8 @@ svg {
     align-items: center;
     justify-content: start;
     text-align: left;
-    width: 439px;
+    width: 100%;
+    max-width: 439px;
     gap: 30px;
     padding: 12px 16px;
     color: var(--text-color);
@@ -946,7 +950,7 @@ svg {
     }
 
     .quiz-play {
-        flex-direction: column-reverse;
+        flex-direction: column;
         padding: 8rem 0;
         width: 100%;
         justify-content: center;
