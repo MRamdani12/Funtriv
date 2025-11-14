@@ -175,6 +175,7 @@ button {
     font-weight: 300;
     font-size: 16px;
     padding: 0;
+    flex: 0 0 auto;
 
     &:hover {
         border: 1px solid white;
