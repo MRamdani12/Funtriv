@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { QuestionInstanceType } from "../utils/types/QuestionInstanceType";
 import Block from "./Block";
+import type { QuizActionType } from "../utils/types/QuizActionType";
 
 type QuizLoadedProps = {
     questionInstances: QuestionInstanceType[];
+    quizDispatch: React.Dispatch<QuizActionType>;
 };
 
 type CurrentQuestion = {
@@ -11,7 +13,10 @@ type CurrentQuestion = {
     question: string;
 };
 
-export default function QuizReady({ questionInstances }: QuizLoadedProps) {
+export default function QuizReady({
+    questionInstances,
+    quizDispatch,
+}: QuizLoadedProps) {
     const [currentQuestion, setCurrentQuestion] =
         useState<CurrentQuestion | null>(null);
     return (
@@ -19,10 +24,13 @@ export default function QuizReady({ questionInstances }: QuizLoadedProps) {
             <div className="quiz-text">
                 <h2>Quiz Loaded!</h2>
                 <p>
-                    {questionInstances.length} questions of Science: Computers
-                    category are loaded and ready to go!
+                    {questionInstances.length} question
+                    {questionInstances.length === 1 ? "" : "s"} are loaded and
+                    ready to go!
                 </p>
-                <button>Start Quiz</button>
+                <button onClick={() => quizDispatch({ type: "startQuiz" })}>
+                    Start Quiz
+                </button>
             </div>
             <div className="quiz-summary">
                 <span>Click on the number to see the question</span>

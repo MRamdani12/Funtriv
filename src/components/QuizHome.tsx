@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { isOneOfString } from "../utils/guards/isOneOfString";
-import type { QuizAction } from "../utils/types/QuizAction";
+import type { QuizActionType } from "../utils/types/QuizActionType";
 import { fetchJSON } from "../utils/api/fetchJSON";
 
 const initialFormState: InitialFormState = {
@@ -35,7 +35,7 @@ type Action =
     | { type: "reset" };
 
 type QuizHomeProps = {
-    quizDispatch: React.ActionDispatch<[action: QuizAction]>;
+    quizDispatch: React.ActionDispatch<[action: QuizActionType]>;
     error: string | null;
 };
 
