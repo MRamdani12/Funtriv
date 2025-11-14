@@ -1,3 +1,5 @@
 # React + TypeScript + Vite
 
-Thanks to open TDB for their free API.
+Thanks to [OpenTDB](https://opentdb.com/) for their free API.
+
+Live link: [Funtriv](https://funtriv.netlify.app/)
