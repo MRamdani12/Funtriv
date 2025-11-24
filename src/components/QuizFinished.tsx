@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import type { QuestionInstanceType } from "../utils/types/QuestionInstanceType";
-import type { QuizActionType } from "../utils/types/QuizActionType";
-import Block from "./Block";
-import Background from "./Background";
 
-type QuizFinishedProps = {
-    questionInstances: QuestionInstanceType[];
-    quizDispatch: React.Dispatch<QuizActionType>;
-};
+import Block from "./ui/Block";
+import Background from "./ui/Background";
+import { useQuizStateContext } from "../hooks/useQuizStateContext";
+import { useQuizDispatchContext } from "../hooks/useQuizDispatchContext";
 
-export default function QuizFinished({
-    questionInstances,
-    quizDispatch,
-}: QuizFinishedProps) {
+export default function QuizFinished() {
+    // Get the questionInstances(List of questions) and the dispatch function from the context provider
+    const { questionInstances } = useQuizStateContext();
+    const { quizDispatch } = useQuizDispatchContext();
+
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
+
+    // Timeout that is used to make sure the component didn't get dismounted yet before the fade-out animation finished.
     const timeout = useRef(0);
 
     const question = questionInstances[currentQuestion];
@@ -23,13 +22,17 @@ export default function QuizFinished({
         ...question.incorrectAnswers,
     ].sort((a, b) => b.localeCompare(a));
     const isAnsweredCorrectly = question.correctAnswer === question.userAnswer;
+
     const totalCorrectAnswer = questionInstances.filter(
         (q) => q.correctAnswer === q.userAnswer
     ).length;
+
+    // Calculating score
     const correctAnswerPercentage = Math.round(
         (totalCorrectAnswer / questionInstances.length) * 100
     );
 
+    // Since effect also run when the component dismounted, I use this to clear the timeout when the fade-out animation has finished
     useEffect(() => {
         return () => clearTimeout(timeout.current);
     }, []);
@@ -182,6 +185,7 @@ export default function QuizFinished({
                 <button
                     onClick={() => {
                         quizDispatch({ type: "home" });
+                        // Calling the restartQuiz dispatch after the fade-out animation finished which will set everything back to the initial state.
                         timeout.current = setTimeout(
                             () => quizDispatch({ type: "restartQuiz" }),
                             310

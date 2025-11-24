@@ -1,3 +1,4 @@
+// Fetching JSON from an API and making sure the type matched whatever T is.
 export async function fetchJSON<T>(
     ...args: Parameters<typeof fetch>
 ): Promise<T> {

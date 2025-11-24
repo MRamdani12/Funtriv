@@ -1,24 +1,23 @@
 import { useState } from "react";
-import type { QuestionInstanceType } from "../utils/types/QuestionInstanceType";
-import Block from "./Block";
-import type { QuizActionType } from "../utils/types/QuizActionType";
 
-type QuizLoadedProps = {
-    questionInstances: QuestionInstanceType[];
-    quizDispatch: React.Dispatch<QuizActionType>;
-};
+import Block from "./ui/Block";
+import { useQuizStateContext } from "../hooks/useQuizStateContext";
+import { useQuizDispatchContext } from "../hooks/useQuizDispatchContext";
 
 type CurrentQuestion = {
     id: number;
     question: string;
 };
 
-export default function QuizReady({
-    questionInstances,
-    quizDispatch,
-}: QuizLoadedProps) {
+export default function QuizReady() {
+    // Get the questionInstances(List of questions) and the dispatch function from the context provider
+    const { questionInstances } = useQuizStateContext();
+    const { quizDispatch } = useQuizDispatchContext();
+
+    // Track the current question opened on the right side of the app when block clicked
     const [currentQuestion, setCurrentQuestion] =
         useState<CurrentQuestion | null>(null);
+
     return (
         <div className="quiz-ready-wrapper">
             <div className="quiz-text">

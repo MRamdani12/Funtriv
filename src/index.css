@@ -13,6 +13,7 @@
     --success: #23c072;
 }
 
+/* Change everything to light-mode class if darkMode is false */
 .light-mode {
     --background-color: #ffffff;
     --secondary-background-color: #f5f0ff;
@@ -932,6 +933,11 @@ svg {
     .quiz-home form {
         display: flex;
         flex-direction: column;
+
+        & input,
+        select {
+            max-width: none;
+        }
     }
 
     .quiz-ready-wrapper {

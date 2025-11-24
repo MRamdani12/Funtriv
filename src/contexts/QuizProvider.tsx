@@ -1,30 +1,14 @@
-//MRamdani
-
 import { useEffect, useReducer } from "react";
 
-import Background from "./Background";
-import Main from "./Main";
-import Navigation from "./Navigation";
-import QuizHome from "./QuizHome";
+import type { FormQueryType } from "../utils/types/FormQueryType";
 import type { QuestionInstanceType } from "../utils/types/QuestionInstanceType";
 import type { QuizActionType } from "../utils/types/QuizActionType";
-import { fetchJSON } from "../utils/api/fetchJSON";
-import type { FormQueryType } from "../utils/types/FormQueryType";
-import QuizReady from "./QuizReady";
-import FadeInOut from "./animations/FadeInOut";
-import Loading from "./Loading";
-import ErrorBaloon from "./ErrorBaloon";
-import QuizPlay from "./QuizPlay";
-import QuizFinished from "./QuizFinished";
 import type { QuizDataType } from "../utils/types/QuizDataType";
+import { fetchJSON } from "../utils/api/fetchJSON";
+import { QuizStateContext } from "./QuizStateContext";
+import { QuizDispatchContext } from "./QuizDispatchContext";
 
-const initialQuizState: QuizStateType = {
-    questionInstances: [],
-    status: "home",
-    query: null,
-    error: null,
-};
-
+// Creating types for QuizState and API response
 type QuizStateType = {
     questionInstances: QuestionInstanceType[];
     status: "home" | "error" | "loading" | "ready" | "playing" | "finished";
@@ -35,6 +19,14 @@ type QuizStateType = {
 type OpenTDBResponse = {
     response_code: number;
     results: QuizDataType[];
+};
+
+// Creating initial state for reducer
+const initialQuizState: QuizStateType = {
+    questionInstances: [],
+    status: "home",
+    query: null,
+    error: null,
 };
 
 function reducer(
@@ -48,6 +40,7 @@ function reducer(
             return {
                 ...quizState,
                 questionInstances: action.payload.map((q) => {
+                    // Decode/convert the string this reducer get from the API.
                     return {
                         question: decodeURIComponent(q.question),
                         correctAnswer: decodeURIComponent(q.correct_answer),
@@ -64,6 +57,7 @@ function reducer(
             return { ...quizState, status: "playing" };
         case "submitAnswer":
             return {
+                // Update the questionInstances with the user answer
                 ...quizState,
                 questionInstances: quizState.questionInstances.map((q, i) => {
                     if (i === action.payload.index) {
@@ -86,13 +80,18 @@ function reducer(
     }
 }
 
-export default function App() {
+export default function QuizProvider({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const [{ questionInstances, query, status, error }, quizDispatch] =
         useReducer(reducer, initialQuizState);
 
     useEffect(() => {
         if (!query) return;
         async function OpenTDBRequest() {
+            // Fetching API from openTDB with all the options from the form on QuizHome components
             quizDispatch({ type: "dataLoading" });
             try {
                 const data = await fetchJSON<OpenTDBResponse>(
@@ -111,6 +110,7 @@ export default function App() {
                     }&encode=url3986`
                 );
 
+                // Handle the error according to openTDB error.
                 if (data.response_code) {
                     if (data.response_code === 1) {
                         throw new Error(
@@ -124,6 +124,7 @@ export default function App() {
                 }
                 quizDispatch({ type: "dataReceived", payload: data.results });
             } catch (err) {
+                // Handle the more generic error
                 quizDispatch({
                     type: "error",
                     payload: `Error when fetching quiz: ${err}`,
@@ -135,45 +136,11 @@ export default function App() {
     }, [query]);
 
     return (
-        <>
-            <Main>
-                <Navigation />
-                <FadeInOut
-                    firstElement={true}
-                    show={status === "home" || status === "error"}
-                >
-                    <QuizHome error={error} quizDispatch={quizDispatch} />
-                </FadeInOut>
-                <FadeInOut show={status === "loading"}>
-                    <Loading />
-                </FadeInOut>
-                {status === "error" && (
-                    <ErrorBaloon quizDispatch={quizDispatch}>
-                        {error}
-                    </ErrorBaloon>
-                )}
-                <FadeInOut show={status === "ready"}>
-                    <QuizReady
-                        quizDispatch={quizDispatch}
-                        questionInstances={questionInstances}
-                    />
-                </FadeInOut>
-                <FadeInOut show={status === "playing"}>
-                    {questionInstances.length > 0 && (
-                        <QuizPlay
-                            quizDispatch={quizDispatch}
-                            questionInstances={questionInstances}
-                        />
-                    )}
-                </FadeInOut>
-                <FadeInOut show={status === "finished"}>
-                    <QuizFinished
-                        questionInstances={questionInstances}
-                        quizDispatch={quizDispatch}
-                    />
-                </FadeInOut>
-            </Main>
-            <Background />
-        </>
+        // Splitting the state and dispatch context for a little optimization
+        <QuizStateContext value={{ questionInstances, query, status, error }}>
+            <QuizDispatchContext value={{ quizDispatch }}>
+                {children}
+            </QuizDispatchContext>
+        </QuizStateContext>
     );
 }

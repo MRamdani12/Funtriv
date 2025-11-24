@@ -1,25 +1,24 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { isOneOfString } from "../utils/guards/isOneOfString";
-import type { QuizActionType } from "../utils/types/QuizActionType";
 import { fetchJSON } from "../utils/api/fetchJSON";
+import { useQuizStateContext } from "../hooks/useQuizStateContext";
+import { useQuizDispatchContext } from "../hooks/useQuizDispatchContext";
 
-const initialFormState: InitialFormState = {
-    numQuestion: undefined,
-    questionCategory: undefined,
-    questionDifficulty: undefined,
-    questionType: undefined,
-};
+// Create all the necessary types for the form.
 
+// Type for the question category
 type openTDBCategory = {
     id: number;
     name: string;
 };
 
+// Type for the question category the API returned
 type openTDBCategoryRes = {
     trivia_categories: openTDBCategory[];
 };
 
+// Type of initial form state
 type InitialFormState = {
     numQuestion: undefined | number;
     questionCategory: undefined | string;
@@ -27,6 +26,7 @@ type InitialFormState = {
     questionType: undefined | "any" | "multiple" | "boolean";
 };
 
+// Type of reducer action on the form
 type Action =
     | { type: "input"; payload: number }
     | { type: "category"; payload: string }
@@ -34,9 +34,11 @@ type Action =
     | { type: "type"; payload: "any" | "multiple" | "boolean" }
     | { type: "reset" };
 
-type QuizHomeProps = {
-    quizDispatch: React.ActionDispatch<[action: QuizActionType]>;
-    error: string | null;
+const initialFormState: InitialFormState = {
+    numQuestion: undefined,
+    questionCategory: undefined,
+    questionDifficulty: undefined,
+    questionType: undefined,
 };
 
 function formReducer(formState: InitialFormState, action: Action) {
@@ -56,15 +58,21 @@ function formReducer(formState: InitialFormState, action: Action) {
     }
 }
 
-export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
+export default function QuizHome() {
+    // Getting the error and dispatch value from context provider
+    const { error } = useQuizStateContext();
+    const { quizDispatch } = useQuizDispatchContext();
+
     const [
         { numQuestion, questionCategory, questionDifficulty, questionType },
         formDispatch,
     ] = useReducer(formReducer, initialFormState);
+
     const [categoryOptions, setCategoryOptions] = useState<
         openTDBCategory[] | null
     >(null);
 
+    // Fetching the question category from openTDB
     useEffect(() => {
         async function getCategory() {
             try {
@@ -87,6 +95,8 @@ export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         formDispatch({ type: "reset" });
+
+        // Make sure if the form fields is not empty since typescript can't detect required property on HTML.
         if (
             numQuestion &&
             questionCategory &&
@@ -161,6 +171,7 @@ export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
                 <div className="select-wrapper">
                     <select
                         onChange={(e) => {
+                            // Some typeguard for difficulty options
                             const diffulty = [
                                 "any",
                                 "hard",
@@ -187,6 +198,7 @@ export default function QuizHome({ quizDispatch, error }: QuizHomeProps) {
                 <div className="select-wrapper" id="type">
                     <select
                         onChange={(e) => {
+                            // Another typeguard for question type options
                             const diffulty = [
                                 "any",
                                 "multiple",

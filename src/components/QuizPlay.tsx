@@ -1,27 +1,29 @@
 import { useEffect, useState } from "react";
 
-import type { QuestionInstanceType } from "../utils/types/QuestionInstanceType";
-import Block from "./Block";
-import type { QuizActionType } from "../utils/types/QuizActionType";
-
-type QuizPlayProps = {
-    questionInstances: QuestionInstanceType[];
-    quizDispatch: React.Dispatch<QuizActionType>;
-};
+import Block from "./ui/Block";
+import { useQuizStateContext } from "../hooks/useQuizStateContext";
+import { useQuizDispatchContext } from "../hooks/useQuizDispatchContext";
 
 // Time to answer one question (30s)
 const SECS_PER_QUESTION = 30;
 
-export default function QuizPlay({
-    questionInstances,
-    quizDispatch,
-}: QuizPlayProps) {
+export default function QuizPlay() {
+    // Get the questionInstances(List of questions) and the dispatch function from the context provider
+    const { questionInstances } = useQuizStateContext();
+    const { quizDispatch } = useQuizDispatchContext();
+
+    // State to get the current question displated on the screen
     const [currentQuestion, setCurrentQuestion] = useState(0);
+
+    // State to calculate maximum number of seconds.
     const [secondsRemaining, setSecondsRemaining] = useState(
         questionInstances.length * SECS_PER_QUESTION
     );
 
+    // Variable to get a question from questionInstances
     const question = questionInstances[currentQuestion];
+
+    // Getting all of the options the question have and sorting them to make sure the correct answer will never be in the first array
     const questionOptions = [
         question.correctAnswer,
         ...question.incorrectAnswers,
@@ -34,9 +36,12 @@ export default function QuizPlay({
     const totalUserAnsweredPercentage = Math.round(
         (totalUserAnswered / totalQuestions) * 100
     );
+
+    // Calculating the minutes and seconds from secondsRemaining state
     const min = Math.floor(secondsRemaining / 60);
     const seconds = secondsRemaining % 60;
 
+    // Side effect to force the quiz into the finished status if the time has ran out.
     useEffect(() => {
         if (secondsRemaining === 0) {
             quizDispatch({ type: "finished" });

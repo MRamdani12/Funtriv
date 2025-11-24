@@ -1,12 +1,12 @@
-import type { QuizActionType } from "../utils/types/QuizActionType";
+import { useQuizDispatchContext } from "../../hooks/useQuizDispatchContext";
 
 export default function ErrorBaloon({
     children,
-    quizDispatch,
 }: {
     children: React.ReactNode;
-    quizDispatch: React.Dispatch<QuizActionType>;
 }) {
+    const { quizDispatch } = useQuizDispatchContext();
+
     return (
         <div className="error">
             {children}

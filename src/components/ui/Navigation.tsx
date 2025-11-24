@@ -1,4 +1,4 @@
-import DarkMode from "./DarkMode";
+import DarkMode from "../DarkMode";
 
 export default function Navigation() {
     return (
