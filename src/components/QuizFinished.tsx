@@ -136,6 +136,11 @@ export default function QuizFinished() {
                     {questionInstances.length} question
                     {questionInstances.length === 1 ? "" : "s"}
                 </h2>
+                <p>
+                    Click on the block to see your answer
+                    {questionInstances.length === 1 ? "" : "s"}
+                </p>
+
                 <div className="quiz-grid">
                     {questionInstances.map((q, i) => {
                         return (
